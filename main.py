@@ -1,12 +1,14 @@
 from config import token
 import sys
 import os
+from debug import *
 import discord, youtube_dl
 from colorama import Fore
 # Fore: BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE, RESET.
 # Back: BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE, RESET.
 # Style: DIM, NORMAL, BRIGHT, RESET_ALL
 
+debug('test')
 sys.path.append(os.path.abspath('.'))
 bot = discord.Client()
 
@@ -54,7 +56,8 @@ async def on_message(message):
         await bot.send_message(channel, "<https://twitch.tv/thebloodyscreen>")
 
     elif msg[0] == '!voice' and author.voice_channel:
-        if msg[1] != None:
+        player = None
+        if msg[1] != 'leave':
             voice = await bot.join_voice_channel(author.voice_channel)
             player = await voice.create_ytdl_player(msg[1])
             player.start()
@@ -62,15 +65,13 @@ async def on_message(message):
         elif msg[1] == 'leave':
             await player.stop()
 
-        while True:
-            try:
-                if player.is_done():
-                    await voice.disconnect()
-                    break
-            except:
-                break
-
-
+        # while True:
+        #     try:
+        #         if player.is_done():
+        #             await voice.disconnect()
+        #             break
+        #     except:
+        #         break
 
 def getRoles(author):
     roles = []
