@@ -1,7 +1,7 @@
 from config import token
 import sys
 import os
-import discord
+import discord, youtube_dl
 from colorama import Fore
 # Fore: BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE, RESET.
 # Back: BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE, RESET.
@@ -33,22 +33,43 @@ async def on_message(message):
     author = message.author
     channel = message.channel
     admin = ["Bot Commander", "admins"]
-    adminCheck = any(role in admin for role in getRoles(author))
-    regularCheck = "Regular" in getRoles(author)
-    modCheck = "Moderator" in getRoles(author)
+    admin = any(role in admin for role in getRoles(author))
+    regular = "Regular" in getRoles(author)
+    mod = "Moderator" in getRoles(author)
     msg = str(message.content).split(' ')
 
     if msg[0] == "!info":
+        await bot.delete_message(message)
         await bot.send_typing(author)
         await bot.send_message(author, embed=discord.Embed(title='Commandlist for TheBloodyDiscord.', description="\n!info\nCauses these messages.\n\n!faq\nPosts a link to the FAQ in the channel it was used in.\n\n!twitch\nPosts a link to the twitch channel in the channel it was used in.", color=0x2AE92A))
 
     elif msg[0] == "!faq":
+        await bot.delete_message(message)
         await bot.send_typing(channel)
         await bot.send_message(channel, "The FAQ is currently being worked on. Please come back later!")
 
     elif msg[0] == "!twitch":
+        await bot.delete_message(message)
         await bot.send_typing(channel)
         await bot.send_message(channel, "<https://twitch.tv/thebloodyscreen>")
+
+    elif msg[0] == '!voice' and author.voice_channel:
+        if msg[1] != None:
+            voice = await bot.join_voice_channel(author.voice_channel)
+            player = await voice.create_ytdl_player(msg[1])
+            player.start()
+
+        elif msg[1] == 'leave':
+            await player.stop()
+
+        while True:
+            try:
+                if player.is_done():
+                    await voice.disconnect()
+                    break
+            except:
+                break
+
 
 
 def getRoles(author):
