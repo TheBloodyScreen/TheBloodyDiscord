@@ -1,12 +1,14 @@
 
 import sys
 import discord
+from TwitterAPI import TwitterAPI
 from discord.ext import commands
 from colorama import Fore
-from config import token
+from config import *
 from debug import *
 import random
 
+api = TwitterAPI(appKey, appSecret, oauthToken, oauthTokenSecret)
 description = '''A learning experience bot, written in python using discory.py .'''
 bot = commands.Bot(command_prefix='.', description=description)
 
@@ -74,6 +76,16 @@ async def leave():
     player.stop()
     await voice.disconnect()
 # everything voice --stop
+
+# simple twitter post command
+@bot.command(pass_context=True)
+async def tweet(ctx):
+    if str(ctx.message.author) == 'TheBloodyScreen#4278':
+        r = api.request('statuses/update', {'status': ctx.message.content.replace('.tweet ', '')})
+        await bot.say('SUCCESS' if r.status_code == 200 else 'FAILURE')
+
+    else:
+         await bot.say("You don't have permission to use this command!")
 
 # simple addition
 @bot.command()
