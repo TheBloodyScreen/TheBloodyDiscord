@@ -152,10 +152,7 @@ async def quote(ctx):
         with connection.cursor() as cursor:
             sql = "SELECT TABLE_NAME AS 'Table Name', TABLE_ROWS AS 'Rows' FROM information_schema.TABLES WHERE TABLES.TABLE_SCHEMA = 'TheBloodyDiscord' AND TABLES.TABLE_TYPE = 'BASE TABLE'"
             cursor.execute(sql)
-            if sys.platform != "win32":
-                maxid = (str(cursor.fetchall()[0]).replace("{'Table Name': 'quotes', 'Rows': ", '')).replace('}', '')
-            else:
-                maxid = (str(cursor.fetchall()[0]).replace("{'Table Name': 'quotes', 'Rows': ", '')).replace('}', '')
+            maxid = (str(cursor.fetchall()[0]).replace("{'Table Name': 'quotes', 'Rows': ", '')).replace('}', '')
             sql = "SELECT `quote` FROM `quotes` WHERE `id`=%s"
             cursor.execute(sql, (random.randint(1, int(maxid))))
             result = (str(cursor.fetchone()).replace("{'quote': ", '')).replace('}', '')
