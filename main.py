@@ -1,7 +1,8 @@
 import sys
-import random
 import config
+import random
 import discord
+from gtts import gTTS
 import pymysql.cursors
 from colorama import Fore
 from debug import dbprint
@@ -32,7 +33,7 @@ async def on_ready():
 async def info(ctx):
     await bot.delete_message(ctx.message)
     await bot.send_typing(ctx.message.author)
-    await bot.send_message(ctx.message.author, embed=discord.Embed(title='Commandlist for TheBloodyDiscord.', description="\n!info\nCauses these messages.\n\n!faq\nPosts a link to the FAQ in the channel it was used in.\n\n!twitch\nPosts a link to the twitch channel in the channel it was used in.", color=0x2AE92A))
+    await bot.send_message(ctx.message.author, embed=discord.Embed(title='Commandlist for TheBloodyDiscord.', description="\n!info\nCauses these messages.\n\n!faq\nPosts a link to the FAQ in the channel it was used in.\n\n!twitch\nPosts a link to the twitch channel in the channel it was used in.\n\nIf the bot says 'Playing .info - indev' I am currently working on the bot and there might be problems while using commands.", color=0x2AE92A))
 
 
 @bot.command(pass_context=True)
@@ -66,9 +67,62 @@ async def play(ctx, cmd: str):
         global player
         player = await voice.create_ytdl_player(cmd)
         player.start()
+        check = True
+        while check is True:
+            if player.is_done():
+                await voice.disconnect()
+                check = False
 
     else:
         await bot.say('Please specify a link!')
+
+
+@voice.command(pass_context=True)
+async def tts(ctx, cmd: str):
+    if cmd:
+        tts = gTTS(text=str(ctx.message.content).replace('.voice tts ', ''), lang='en')
+        tts.save('./audio/tts.mp3')
+        global voice
+        voice = await bot.join_voice_channel(ctx.message.author.voice_channel)
+        global player
+        player = voice.create_ffmpeg_player('./audio/tts.mp3')
+        player.start()
+        check = True
+        while check is True:
+            if player.is_done():
+                await voice.disconnect()
+                check = False
+
+        else:
+            await bot.say('Please specify a message!')
+
+
+@voice.command(pass_context=True)
+async def rimshot(ctx):
+    global voice
+    voice = await bot.join_voice_channel(ctx.message.author.voice_channel)
+    global player
+    player = voice.create_ffmpeg_player('./audio/rimshot.mp3')
+    player.start()
+    check = True
+    while check is True:
+        if player.is_done():
+            await voice.disconnect()
+            check = False
+
+
+@voice.command(pass_context=True)
+async def alarm(ctx):
+    global voice
+    voice = await bot.join_voice_channel(ctx.message.author.voice_channel)
+    global player
+    player = voice.create_ffmpeg_player('./audio/alarm.mp3')
+    player.start()
+    check = True
+    while check is True:
+        if player.is_done():
+            await voice.disconnect()
+            check = False
 
 
 @voice.command()
@@ -196,11 +250,24 @@ async def addquote(ctx):
 @bot.event
 async def on_message(message):
     author = message.author
+    bot.get_all_emojis()
+
     if message.content.startswith('CODE') and message.author != 'TheBloodyDiscord#6405' and message.author.id != '322081774622605312':
         author = str(message.author)
         await bot.delete_message(message)
         newMessage = str(message.content).replace("CODE", "```")
         await bot.send_message(message.channel, "CODE by " + str(author[0:-5]) + newMessage + "\n```")
+    elif message.content.find('deadmau5') >= 0:
+        await bot.add_reaction(message, ":deadmau5:230176271135408130")
+    elif message.content.find('penis') >= 0:
+        await bot.add_reaction(message, ":penis:232019776904364033")
+    elif message.content.find('vagina') >= 0:
+        await bot.add_reaction(message, ":vagina:234426457068273664")
+    elif message.content.find('boob') >= 0:
+        await bot.add_reaction(message, ":titcart:234430485437218829")
+    elif message.content.find('ALLEMOJIS') >= 0:
+        for emoji in bot.get_all_emojis():
+            await bot.add_reaction(message, emoji)
     await bot.process_commands(message)
 
 
