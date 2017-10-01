@@ -16,17 +16,17 @@ bot = commands.Bot(command_prefix='.', description=description)
 
 @bot.event
 async def on_ready():
-    print(Fore.GREEN + 'Logged in as')
-    print(Fore.WHITE + "Name: " + Fore.GREEN + bot.user.name)
-    print(Fore.WHITE + "ID: " + Fore.GREEN + bot.user.id)
-    print(Fore.WHITE + '________________________')
+    dbprint('success', 'Logged in as')
+    dbprint('info', "Name: " + Fore.GREEN + bot.user.name)
+    dbprint('info', "ID: " + Fore.GREEN + bot.user.id)
+    dbprint('info', '________________________')
     dbprint('info', sys.platform)
     if sys.platform != "win32":
         await bot.change_presence(game=discord.Game(name='.info'))
     else:
         await bot.change_presence(game=discord.Game(name='.info - indev'))
-    print(Fore.GREEN + "connected successfully")
-    print(Fore.WHITE + '________________________')
+    dbprint('success', "connected successfully")
+    dbprint('info', '________________________')
 
 
 @bot.command(pass_context=True)
