@@ -1,6 +1,6 @@
 config.py
 __pycache__/*
-config/config.yml
+/config/config.yml
 venv/
 audio/
 *.dll
