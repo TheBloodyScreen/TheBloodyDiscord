@@ -1,8 +1,10 @@
 config.py
 __pycache__/*
-
+config/config.yml
+venv/
+audio/
 *.dll
-
+.idea/
 \.vscode/launch\.json
 
 music\.mp3
